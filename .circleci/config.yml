@@ -35,13 +35,6 @@ jobs:
             python setup.py sdist
             echo export TAR_FILE="dist/wqp-$WQP_VERSION.tar.gz" >> $BASH_ENV
       - run:
-          name: Create git releae tag
-          command: |
-            git config --global user.email $GITHUB_USER_EMAIL
-            git config --global user.name $GITHUB_USER_NAME
-            git tag -a $WQP_VERSION -m "Release of version $WQP_VERSION"
-            git push origin $WQP_VERSION
-      - run:
           name: Deploy package
           command: |
             echo Pushing file $TAR_FILE to gemfury...
