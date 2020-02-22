@@ -26,14 +26,19 @@ jobs:
       - run:
           name: Get version
           command: |
-            VERSION=$(python -c "import wqp; print(wqp.__version__)")
-            echo Deploying version $VERSION...
-            echo export WQP_VERSION=$VERSION >> $BASH_ENV
+            WQP_VERSION=$(python -c "import wqp; print(wqp.__version__)")
+            echo export WQP_VERSION=$WQP_VERSION >> $BASH_ENV
+            echo Deploying version $WQP_VERSION...
       - run:
           name: Build package
           command: |
             python setup.py sdist
             echo export TAR_FILE="dist/wqp-$WQP_VERSION.tar.gz" >> $BASH_ENV
+      - run:
+          name: Create git tag
+          command: |
+            git tag -a $WQP_VERSION -m "Release of version $WQP_VERSION"
+            git push origin $WQP_VERSION
       - run:
           name: Deploy package
           command: |
@@ -54,4 +59,4 @@ workflows:
           filters:
             branches:
               only:
-                - feature/ci
+                - master
