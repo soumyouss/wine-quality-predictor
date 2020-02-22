@@ -9,12 +9,36 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: |
-            pip install --upgrade pip -r test-requirements.txt
+          command:  pip install --upgrade pip -r test-requirements.txt
       - run:
           name: Run unit tests
-          command: |
-            export PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tests && pytest tests/* -p no:warnings
+          command: export PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/tests && pytest tests/* -p no:warnings
+
+  deploy:
+    working_directory: ~/repo
+      docker:
+          - image: python:3.7
+      steps:
+        - checkout
+        - run:
+            name: Install package
+            command: pip install .
+        - run:
+            name: Get version
+            command: |
+              VERSION=$(python -c "import wqp; print(wqp.__version__)")
+              echo Deploying version $VERSION...
+              echo export WQP_VERSION=$VERSION >> $BASH_ENV
+        - run:
+            name: Build package
+            command: |
+              python setup.py sdist
+              echo export TAR_FILE="dist/wqp-$WQP_VERSION.tar.gz" >> $BASH_ENV
+        - run:
+            name: Deploy package
+            command: |
+              echo Pushing file $TAR_FILE to gemfury...
+              curl -F "package=@dist/wqp-$WQP_VERSION.tar.gz" "https://$FURY_PUSH_TOKEN@push.fury.io/$FURY_USER_NAME/"
 
 
 workflows:
@@ -25,4 +49,9 @@ workflows:
           filters:
             branches:
               ignore:
+                - master
+      - unittests:
+          filters:
+            branches:
+              only:
                 - master
