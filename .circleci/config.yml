@@ -4,7 +4,7 @@ jobs:
   unittests:
     working_directory: ~/repo
     docker:
-      - image: python3.7
+      - image: python:3.7
     steps:
       - checkout
       - run:
