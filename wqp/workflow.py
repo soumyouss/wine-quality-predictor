@@ -36,6 +36,3 @@ def model_training_workflow(data_path: str):
         logger.error(e)
         sys.exit(1)
 
-
-if __name__ == '__main__':
-    model_training_workflow('http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv')
