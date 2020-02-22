@@ -50,8 +50,8 @@ workflows:
             branches:
               ignore:
                 - master
-      - unittests:
+      - deploy:
           filters:
             branches:
               only:
-                - master
+                - feature/ci
